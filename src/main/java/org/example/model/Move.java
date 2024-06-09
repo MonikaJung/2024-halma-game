@@ -1,6 +1,7 @@
 package org.example.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +12,9 @@ public class Move {
     private final int startY;
     private final int endX;
     private final int endY;
-    private final Set<String> jumpedPawns; // Przechowuje współrzędne przeskoczonych pionków
+    @Setter
+    private Set<String> jumpedPawns;
+    private boolean isSimpleMove;
 
     public Move(int startX, int startY, int endX, int endY) {
         this.startX = startX;
@@ -19,6 +22,7 @@ public class Move {
         this.endX = endX;
         this.endY = endY;
         this.jumpedPawns = new HashSet<>();
+        this.isSimpleMove = true;
     }
 
     public boolean isLegalMove(int[][] board, int player) {
@@ -27,9 +31,12 @@ public class Move {
         int startField = board[startX][startY];
         int endField = board[endX][endY];
 
-        if (!isPawnPlayers(startField, player) || isFieldOccupied(endField)) return false;
+        if (isPawnNotEqualCurrentPlayer(startField, player) || isFieldOccupied(endField)) return false;
         if (isSimpleMove()) return true;
-        if (isJumpMove()) return isJumpCorrect(board);
+        if (isJumpMove()) {
+            this.isSimpleMove = false;
+            return isJumpCorrect(board);
+        }
 
         return false;
     }
@@ -39,19 +46,17 @@ public class Move {
         int jumpY = (startY + endY) / 2;
         String jumpedPawnKey = jumpX + "," + jumpY;
 
-        if (board[jumpX][jumpY] != 0 && !jumpedPawns.contains(jumpedPawnKey)) {
-            jumpedPawns.add(jumpedPawnKey);
-            return true;
-        }
-        return false;
+        return board[jumpX][jumpY] != 0 && !jumpedPawns.contains(jumpedPawnKey);
     }
 
     public boolean canContinueJumping(int[][] board) {
+        if (this.isSimpleMove)
+            return false;
         for (int x = -2; x <= 2; x += 4) {
             for (int y = -2; y <= 2; y += 4) {
                 int nextX = endX + x;
                 int nextY = endY + y;
-                if (isXYCorrect(nextX, board.length) && isXYCorrect(nextY, board[0].length)) {
+                if (isXYIncorrect(nextX, board.length) && isXYIncorrect(nextY, board[0].length)) {
                     int midX = (endX + nextX) / 2;
                     int midY = (endY + nextY) / 2;
                     String midKey = midX + "," + midY;
@@ -73,16 +78,16 @@ public class Move {
     }
 
     private boolean areFieldsOffTheBoard(int[][] board) {
-        return isXYCorrect(startX, board.length) || isXYCorrect(startY, board[startX].length)
-                || isXYCorrect(endX, board.length) || isXYCorrect(endY, board[endX].length);
+        return isXYIncorrect(startX, board.length) || isXYIncorrect(startY, board[startX].length)
+                || isXYIncorrect(endX, board.length) || isXYIncorrect(endY, board[endX].length);
     }
 
-    private boolean isXYCorrect(int field, int boardLength) {
-        return field >= 0 && field < boardLength;
+    private boolean isXYIncorrect(int field, int boardLength) {
+        return field < 0 || field >= boardLength;
     }
 
-    private boolean isPawnPlayers(int pawn, int player) {
-        return pawn == player;
+    private boolean isPawnNotEqualCurrentPlayer(int pawn, int player) {
+        return pawn != player;
     }
 
     private boolean isFieldOccupied(int field) {
