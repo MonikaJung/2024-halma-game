@@ -64,4 +64,29 @@ public class MoveTests {
         Assertions.assertTrue(board.makeMove(move));
         Assertions.assertFalse(move.canContinueJumping(board.getBoard()));
     }
+
+    @Test
+    public void makeTwoJumpMoves() {
+        prepareBoardForMultipleJump();
+        Assertions.assertEquals(0, board.getBoard()[0][6]);
+        Assertions.assertEquals(0, board.getBoard()[0][8]);
+        Move move = new Move(0, 4, 0, 6);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertFalse(move.isSimpleMove());
+        Assertions.assertTrue(move.setNextMove(board.getBoard(), 0, 8));
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertTrue(move.setNextMove(board.getBoard(), 0, 10));
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertFalse(move.canContinueJumping(board.getBoard()));
+    }
+
+    private void prepareBoardForMultipleJump() {
+        // Prepare for moves y4->y6, y6->y8, y8->y10
+        Move move = new Move(0, 6, 0, 8);
+        Assertions.assertTrue(board.makeMove(move));
+        board.setCurrentPlayer(1);
+        move = new Move(0, 8, 0, 9);
+        Assertions.assertTrue(board.makeMove(move));
+        board.setCurrentPlayer(1);
+    }
 }

@@ -39,7 +39,7 @@ public class Board {
     }
 
     public boolean makeMove(Move move) {
-        if (move.isLegalMove(board, currentPlayer)) {
+        if (move.doMoveIfIsLegal(board, currentPlayer)) {
             board[move.getStartX()][move.getStartY()] = 0;
             board[move.getEndX()][move.getEndY()] = currentPlayer;
 
