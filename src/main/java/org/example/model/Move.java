@@ -25,65 +25,80 @@ public class Move {
 
     @Override
     public String toString() {
-        return "MOVE: "+ startX+":"+startY+" -> "+endX+":"+endY;
+        return "MOVE: " + startX + ":" + startY + " -> " + endX + ":" + endY;
     }
 
-    public boolean setNextMove(int[][] board, int endX, int endY) {
+    public boolean setNextMove(int[][] board, int nextEndX, int nextEndY) {
+        int oldStartX = startX;
+        int oldStartY = startY;
+        int oldEndX = endX;
+        int oldEndY = endY;
+
+
         if (canContinueJumping(board)) {
             this.startX = this.endX;
             this.startY = this.endY;
-            this.endX = endX;
-            this.endY = endY;
-            return true;
+            this.endX = nextEndX;
+            this.endY = nextEndY;
+            MidPawn playersJumpingPawn = new MidPawn(board, startX, startY);
+
+            int[][] copyBoard = board.clone();
+            if (isMoveLegal(copyBoard, playersJumpingPawn.getPlayer())) {
+                return true;
+            } else {
+                this.startX = oldStartX;
+                this.startY = oldStartY;
+                this.endX = oldEndX;
+                this.endY = oldEndY;
+                return false;
+            }
         }
         return false;
     }
 
     public boolean doMoveIfIsLegal(int[][] board, int player) {
-        if (areFieldsOffTheBoard(board)) return false;
-
-        int startField = board[startX][startY];
-        int endField = board[endX][endY];
-
-        if (isPawnNotEqualCurrentPlayer(startField, player) || isFieldOccupied(endField)) return false;
-        if (isMoveSimple()) return true;
-        if (isJumpMove()) {
-            this.isSimpleMove = false;
-            return makeJumpIfJumpCorrect(board);
-        }
-
-        return false;
-    }
-
-    private boolean makeJumpIfJumpCorrect(int[][] board) {
-        int jumpX = (startX + endX) / 2;
-        int jumpY = (startY + endY) / 2;
-        String jumpedPawnKey = jumpX + "," + jumpY;
-
-        if (board[jumpX][jumpY] != 0 && !jumpedPawns.contains(jumpedPawnKey)) {
-            jumpedPawns.add(jumpedPawnKey);
+        if (isMoveLegal(board, player)) {
+            if (isJumpMove()) {
+                MidPawn midPawn = new MidPawn(board, ((startX + endX) / 2), ((startY + endY) / 2));
+                jumpedPawns.add(midPawn.getKey());
+            }
             return true;
         }
         return false;
     }
 
+    private boolean isMoveLegal(int[][] board, int player) {
+        if (areFieldsOffTheBoard(board)) return false;
+
+        int startField = board[startX][startY];
+        int endField = board[endX][endY];
+        if (isPawnNotEqualCurrentPlayer(startField, player) || isFieldOccupied(endField)) return false;
+
+        if (isMoveSimple()) return true;
+        if (isJumpMove()) {
+            this.isSimpleMove = false;
+            MidPawn midPawn = new MidPawn(board, ((startX + endX) / 2), ((startY + endY) / 2));
+            return isJumpCorrect(midPawn);
+        }
+        return false;
+    }
+
+
+    private boolean isJumpCorrect(MidPawn midPawn) {
+        return midPawn.getPlayer() != 0 && !jumpedPawns.contains(midPawn.getKey());
+    }
+
     public boolean canContinueJumping(int[][] board) {
-        if (this.isSimpleMove)
-            return false;
+        if (this.isSimpleMove) return false;
 
         for (int x = -2; x < 3; x += 2) {
             for (int y = -2; y < 3; y += 2) {
                 int nextX = endX + x;
                 int nextY = endY + y;
-
                 if (!isXYIncorrect(nextX, board.length) && !isXYIncorrect(nextY, board[0].length)) {
                     if (!(nextY == endY && nextX == endX)) {
-
-                        int midPawnX = (endX + nextX) / 2;
-                        int midPawnY = (endY + nextY) / 2;
-                        String midPawnKey = midPawnX + "," + midPawnY;
-
-                        if (board[nextX][nextY] == 0 && board[midPawnX][midPawnY] != 0 && !jumpedPawns.contains(midPawnKey))
+                        MidPawn midPawn = new MidPawn(board, ((endX + nextX) / 2), ((endY + nextY) / 2));
+                        if (board[nextX][nextY] == 0 && isJumpCorrect(midPawn))
                             return true;
                     }
                 }
@@ -114,5 +129,25 @@ public class Move {
 
     private boolean isFieldOccupied(int field) {
         return field != 0;
+    }
+
+    @Getter
+    private static class MidPawn {
+        private final int x;
+        private final int y;
+        private final int player;
+        private final String key;
+
+        public MidPawn(int[][] board, int x, int y) {
+            this.x = x;
+            this.y = y;
+            this.player = board[x][y];
+            this.key = x + "," + y;
+        }
+
+        @Override
+        public String toString() {
+            return "PAWN: " + x + ";" + y + " p" + player;
+        }
     }
 }

@@ -2,6 +2,7 @@ import org.example.model.Board;
 import org.example.model.Move;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class MoveTests {
@@ -66,7 +67,7 @@ public class MoveTests {
     }
 
     @Test
-    public void makeTwoJumpMoves() {
+    public void makeMultiJumpMove() {
         prepareBoardForMultipleJump();
         Assertions.assertEquals(0, board.getBoard()[0][6]);
         Assertions.assertEquals(0, board.getBoard()[0][8]);
@@ -79,9 +80,21 @@ public class MoveTests {
         Assertions.assertTrue(board.makeMove(move));
         Assertions.assertFalse(move.canContinueJumping(board.getBoard()));
     }
+    @Disabled
+    @Test
+    public void makeMultiJumpMoveWithDoubleJumpedPawn() {
+        prepareBoardForMultipleJump();
+        Assertions.assertEquals(0, board.getBoard()[0][6]);
+        Assertions.assertEquals(0, board.getBoard()[0][8]);
+        Move move = new Move(0, 4, 0, 6);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertFalse(move.setNextMove(board.getBoard(), 0, 4));
+        Assertions.assertTrue(move.setNextMove(board.getBoard(), 0, 6));
+        Assertions.assertTrue(board.makeMove(move));
+    }
 
     private void prepareBoardForMultipleJump() {
-        // Prepare for moves y4->y6, y6->y8, y8->y10
+        // Prepare for moves y4->y6, y6->y8, y8->y10 with x=0, player=1
         Move move = new Move(0, 6, 0, 8);
         Assertions.assertTrue(board.makeMove(move));
         board.setCurrentPlayer(1);
