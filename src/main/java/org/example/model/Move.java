@@ -34,6 +34,8 @@ public class Move {
         int oldEndX = endX;
         int oldEndY = endY;
 
+        //todo delete this comment
+        System.out.println("OLD MOVE-- " +this.toString());
 
         if (canContinueJumping(board)) {
             this.startX = this.endX;
@@ -44,12 +46,18 @@ public class Move {
 
             int[][] copyBoard = board.clone();
             if (isMoveLegal(copyBoard, playersJumpingPawn.getPlayer())) {
+                //todo delete this comment
+                System.out.println("YES-- " +this.toString());
                 return true;
             } else {
+                //todo delete this comment
+                System.out.println("1NO -- " +this.toString());
                 this.startX = oldStartX;
                 this.startY = oldStartY;
                 this.endX = oldEndX;
                 this.endY = oldEndY;
+                //todo delete this comment
+                System.out.println("NO -- " +this.toString());
                 return false;
             }
         }
