@@ -1,3 +1,4 @@
+import org.example.errors.InvalidBoardInitException;
 import org.example.model.Board;
 import org.example.model.Move;
 import org.junit.jupiter.api.*;
@@ -10,8 +11,8 @@ public class MoveTests {
         private Board board;
 
         @BeforeEach
-        void setup() {
-            this.board = new Board(1);
+        void setup() throws InvalidBoardInitException {
+            this.board = new Board(2, 16, 1);
         }
         @Test
         public void makeSimpleMove() {
@@ -67,8 +68,8 @@ public class MoveTests {
         private Board board;
 
         @BeforeEach
-        void setup() {
-            this.board = new Board(1);
+        void setup() throws InvalidBoardInitException {
+            this.board = new Board(2, 16, 1);
 
         }
 

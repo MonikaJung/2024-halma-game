@@ -1,41 +1,44 @@
 package org.example.model;
 
 import lombok.Getter;
+import lombok.Setter;
+import org.example.errors.InvalidBoardInitException;
 
 @Getter
 public class Board {
     private final int[][] board;
+    @Setter
     private int currentPlayer;
+    private final int playerCount;
+    private final int boardSize;
 
-    public Board(int currentPlayer) {
-        this.board = initialBoardState();
+    public Board(int playerCount, int boardSize, int currentPlayer) throws InvalidBoardInitException {
+        if(!validStartParameters(playerCount, boardSize, currentPlayer))
+            throw new InvalidBoardInitException("ERROR: Board size must be 16, 10 or 6 and players count must be 2 or 4.");
         this.currentPlayer = currentPlayer;
+        this.playerCount = playerCount;
+        this.boardSize = boardSize;
+        this.board = getInitialBoardState(playerCount, boardSize);
     }
 
-    public static int[][] initialBoardState() {
-        return new int[][] {
-               //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 (Y)
-                {1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2},
-                {0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2},
-        };
+    private boolean validStartParameters(int playerCount, int boardSize, int currentPlayer) {
+        return (playerCount == 4 || playerCount == 2) && (boardSize == 16 || boardSize == 10 || boardSize == 6)
+                && currentPlayer > 0 && currentPlayer<= playerCount;
     }
 
-    public void setCurrentPlayer(int currentPlayer) {
-        this.currentPlayer = currentPlayer;
+    private int[][] getInitialBoardState(int playerCount, int boardSize) {
+        switch (boardSize){
+            case 16:
+                if (playerCount == 2) return BoardInitStates.initialBoardState16P2();
+                else return BoardInitStates.initialBoardState16P4();
+            case 10:
+                if (playerCount == 2) return BoardInitStates.initialBoardState10P2();
+                else return BoardInitStates.initialBoardState10P4();
+            case 6:
+                if (playerCount == 4) return BoardInitStates.initialBoardState6P4();
+            default:
+                return BoardInitStates.initialBoardState6P2();
+        }
     }
 
     public boolean makeMove(Move move) {
@@ -43,15 +46,13 @@ public class Board {
             board[move.getStartX()][move.getStartY()] = 0;
             board[move.getEndX()][move.getEndY()] = currentPlayer;
 
-            if (move.canContinueJumping(board)) {
-                currentPlayer = currentPlayer == 1 ? 1 : 2;
-            } else {
-                currentPlayer = currentPlayer == 1 ? 2 : 1;
+            if (!move.canContinueJumping(board)) {
+                currentPlayer += 1;
+                if (currentPlayer > playerCount)
+                    currentPlayer = 1;
             }
             return true;
         }
         return false;
     }
-
 }
-
