@@ -7,7 +7,6 @@ import org.example.errors.InvalidBoardInitException;
 @Getter
 public class Board {
     private final int[][] board;
-    @Setter
     private int currentPlayer;
     private final int playerCount;
     private final int boardSize;
@@ -39,6 +38,14 @@ public class Board {
             default:
                 return BoardInitStates.initialBoardState6P2();
         }
+    }
+
+    public boolean setCurrentPlayer(int currentPlayer) {
+        if (currentPlayer > 0 && currentPlayer <= playerCount){
+            this.currentPlayer = currentPlayer;
+            return true;
+        }
+        return false;
     }
 
     public boolean makeMove(Move move) {
