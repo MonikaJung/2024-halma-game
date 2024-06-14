@@ -3,7 +3,7 @@ package org.example.model;
 public class BoardInitStates {
     public static int[][] initialBoardState16P2() {
         return new int[][] {
-                //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 (Y)
+               //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 (Y)
                 {1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0},
                 {1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -25,7 +25,7 @@ public class BoardInitStates {
 
     public static int[][] initialBoardState16P4() {
         return new int[][] {
-                //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 (Y)
+               //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 (Y)
                 {1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3},
                 {1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 3, 3},
                 {1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3},
@@ -47,7 +47,7 @@ public class BoardInitStates {
 
     public static int[][] initialBoardState10P2() {
         return new int[][] {
-                //0  1  2  3  4  5  6  7  8  9 (Y)
+               //0  1  2  3  4  5  6  7  8  9 (Y)
                 {1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
                 {1, 1, 1, 1, 0, 0, 0, 0, 0, 0},
                 {1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
@@ -63,7 +63,7 @@ public class BoardInitStates {
 
     public static int[][] initialBoardState10P4() {
         return new int[][] {
-                //0  1  2  3  4  5  6  7  8  9 (Y)
+               //0  1  2  3  4  5  6  7  8  9 (Y)
                 {1, 1, 1, 1, 1, 3, 3, 3, 3, 3},
                 {1, 1, 1, 1, 0, 0, 3, 3, 3, 3},
                 {1, 1, 1, 0, 0, 0, 0, 3, 3, 3},
@@ -79,7 +79,7 @@ public class BoardInitStates {
 
     public static int[][] initialBoardState6P2() {
         return new int[][] {
-                //0  1  2  3  4  5  (Y)
+               //0  1  2  3  4  5  (Y)
                 {1, 1, 1, 0, 0, 0},
                 {1, 1, 0, 0, 0, 0},
                 {1, 0, 0, 0, 0, 0},
@@ -91,13 +91,13 @@ public class BoardInitStates {
 
     public static int[][] initialBoardState6P4() {
         return new int[][] {
-                //0  1  2  3  4  5  (Y)
+               //0  1  2  3  4  5  (Y)
                 {1, 1, 1, 3, 3, 3},
                 {1, 1, 0, 0, 3, 3},
                 {1, 0, 0, 0, 0, 3},
-                {3, 0, 0, 0, 0, 2},
-                {3, 3, 0, 0, 2, 2},
-                {3, 3, 3, 2, 2, 2}
+                {4, 0, 0, 0, 0, 2},
+                {4, 4, 0, 0, 2, 2},
+                {4, 4, 4, 2, 2, 2}
         };
     }
 }
