@@ -20,26 +20,46 @@ public class Game {
             System.out.println(e.getMessage());
             return;
         }
+        Move move = null;
         do {
-            board.displayMoveAndState(getUserMove());
-        } while (board.isGameOver(board.getPrevPlayer()));
+            Printer.displayMoveAndState(move, board.getCurrentPlayer(), board.getPrevPlayer(), board.getBoard());
+            if (move != null && move.canContinueJumping(board.getBoard())) {
+                System.out.println("Czy chcesz dalej skakać? (t/tak/nie/n)");
+                String answer = scanner.nextLine().toLowerCase();
+                if (answer.equals("n") || answer.equals("nie")) {
+                    board.setCurrentPlayer(board.getCurrentPlayer() + 1);
+                    continue;
+                }
+            }
+            move = getUserMove();
+        } while (!board.isGameOver(board.getPrevPlayer()));
 
-        System.out.println("Game over!");
+        System.out.println("Game over! Winner: Player " + board.getPrevPlayer());
     }
 
+
     //todo usun testowy start
-    public void testStart() throws InvalidBoardInitException {
+    public void testStart() {
         board = new Board();
 
         Move move = null;
-        if (!board.isGameOver(board.getCurrentPlayer()))
-            do {
-                board.displayMoveAndState(move);
-                move = getUserMove();
-            } while (!board.isGameOver());
+        do {
+            Printer.displayMoveAndState(move, board.getCurrentPlayer(), board.getPrevPlayer(), board.getBoard());
+            if (move != null && move.canContinueJumping(board.getBoard())) {
+                System.out.println("Czy chcesz dalej skakać? (t/tak/nie/n)");
+                String answer = scanner.next();
+                answer = answer.toLowerCase();
+                if (answer.equals("n") || answer.equals("nie")) {
+                    board.setCurrentPlayer(board.getCurrentPlayer() + 1);
+                    System.out.println("Next move skipped.");
+                    continue;
+                }
+            }
+            move = getUserMove();
+        } while (!board.isGameOver(board.getPrevPlayer()));
 
         int winner = board.getPrevPlayer();
-        board.printBoard();
+        Printer.printBoard(board.getBoard());
         System.out.println("Game over! Player " + winner + " won!");
     }
 

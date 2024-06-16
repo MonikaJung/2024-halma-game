@@ -2,9 +2,7 @@ package org.example.model;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -43,7 +41,6 @@ public class Move {
             this.startY = this.endY;
             this.endX = nextEndX;
             this.endY = nextEndY;
-            MidPawn playersJumpingPawn = new MidPawn(board, startX, startY);
 
             int[][] copyBoard = board.clone();
             if (isMoveLegal(copyBoard)) {
@@ -109,27 +106,6 @@ public class Move {
             }
         }
         return false;
-    }
-
-    public List<Move> getMovesForPlayer(int[][] board, int player) {
-        List<Move> legalMoves = new ArrayList<>();
-        for (int x = 0; x < board.length; x++) {
-            for (int y = 0; y < board[x].length; y++) {
-                if (board[x][y] == player) {
-                    for (int dx = -2; dx <= 2; dx++) {
-                        for (int dy = -2; dy <= 2; dy++) {
-                            if (Math.abs(dx) + Math.abs(dy) == 1 || Math.abs(dx) == 2 && Math.abs(dy) == 2) {
-                                Move potentialMove = new Move(x, y, x + dx, y + dy, player);
-                                if (potentialMove.doMoveIfIsLegal(board)) {
-                                    legalMoves.add(potentialMove);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return legalMoves;
     }
 
     private boolean isJumpMove() {

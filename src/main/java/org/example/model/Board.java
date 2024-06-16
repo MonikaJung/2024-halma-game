@@ -3,6 +3,9 @@ package org.example.model;
 import lombok.Getter;
 import org.example.errors.InvalidBoardInitException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public class Board {
     private final int[][] board;
@@ -17,6 +20,13 @@ public class Board {
         this.playerCount = playerCount;
         this.boardSize = boardSize;
         this.board = getInitialBoardState(playerCount, boardSize);
+    }
+
+    public Board(Board board)  {
+        this.currentPlayer = board.getCurrentPlayer();
+        this.playerCount = board.getPlayerCount();
+        this.boardSize = board.getBoardSize();
+        this.board = board.getBoard().clone();
     }
 
     //todo - usun testowy konstruktor
@@ -51,6 +61,27 @@ public class Board {
         }
     }
 
+    public List<Move> getMovesForPlayer(int player) {
+        List<Move> legalMoves = new ArrayList<>();
+        for (int x = 0; x < board.length; x++) {
+            for (int y = 0; y < board[x].length; y++) {
+                if (board[x][y] == player) {
+                    for (int dx = -2; dx <= 2; dx++) {
+                        for (int dy = -2; dy <= 2; dy++) {
+                            if (Math.abs(dx) + Math.abs(dy) == 1 || Math.abs(dx) == 2 && Math.abs(dy) == 2) {
+                                Move potentialMove = new Move(x, y, x + dx, y + dy, player);
+                                if (potentialMove.doMoveIfIsLegal(board)) {
+                                    legalMoves.add(potentialMove);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return legalMoves;
+    }
+
     public boolean setCurrentPlayer(int currentPlayer) {
         if (currentPlayer > 0 && currentPlayer <= playerCount) {
             this.currentPlayer = currentPlayer;
@@ -72,58 +103,6 @@ public class Board {
         }
         return false;
     }
-
-    public void displayMoveAndState(Move move) {
-        int prevPlayer = getPrevPlayer();
-        if (move != null) {
-            System.out.println("Last move: player " + prevPlayer + " (" + move.getStartX() + "," + move.getStartY() + ") " + "->" + " (" + move.getEndX() + "," + move.getEndY() + ")");
-            if (move.canContinueJumping(board)) {
-                System.out.println("Turn: player " + prevPlayer + " (can continue jumping)");
-            } else {
-                System.out.println("Turn: player " + currentPlayer);
-            }
-        } else {
-            System.out.println("---------NEW GAME---------");
-            System.out.println("Turn: player " + currentPlayer);
-        }
-        printBoard();
-    }
-
-    public void printBoard() {
-        int size = board.length;
-
-        System.out.print("   (Y):");
-        for (int j = 0; j < size; j++) {
-            System.out.printf("%2d ", j);
-        }
-        System.out.println();
-        System.out.print("(X)    ");
-        for (int j = 0; j < size; j++) {
-            System.out.print("___");
-        }
-        System.out.println("_     (X)");
-
-        for (int i = 0; i < size; i++) {
-            System.out.printf("%2d    | ", i);
-            for (int j = 0; j < size; j++) {
-                System.out.printf("%d  ", board[i][j]);
-            }
-            System.out.printf("|    %2d\n", i);
-        }
-
-        System.out.print("       ");
-        for (int j = 0; j < size; j++) {
-            System.out.print("___");
-        }
-        System.out.println("_");
-
-        System.out.print("   (Y):");
-        for (int j = 0; j < size; j++) {
-            System.out.printf("%2d ", j);
-        }
-        System.out.println();
-    }
-
 
     public boolean isGameOver() {
         return isGameOver(getPrevPlayer());
