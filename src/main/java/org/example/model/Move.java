@@ -2,6 +2,7 @@ package org.example.model;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class Move {
 
     @Override
     public String toString() {
-        return "MOVE: " + startX + ":" + startY + " -> " + endX + ":" + endY;
+        return "MOVE: P" + player + " " + startX + ":" + startY + " -> " + endX + ":" + endY;
     }
 
     public boolean setNextMove(int[][] board, int nextEndX, int nextEndY) {
@@ -67,7 +68,7 @@ public class Move {
         return false;
     }
 
-    private boolean isMoveLegal(int[][] board) {
+    public boolean isMoveLegal(int[][] board) {
         if (areFieldsOffTheBoard(board)) return false;
 
         int startField = board[startX][startY];
@@ -106,6 +107,27 @@ public class Move {
             }
         }
         return false;
+    }
+
+    public ArrayList<Move> getNextJumps(int[][] board) {
+        if (this.isSimpleMove) return null;
+
+        ArrayList<Move> nextJumps = new ArrayList<>();
+
+        for (int x = -2; x < 3; x += 2) {
+            for (int y = -2; y < 3; y += 2) {
+                int nextX = endX + x;
+                int nextY = endY + y;
+                if (!isXYIncorrect(nextX, board.length) && !isXYIncorrect(nextY, board[0].length)) {
+                    if (!(nextY == endY && nextX == endX)) {
+                        MidPawn midPawn = new MidPawn(board, ((endX + nextX) / 2), ((endY + nextY) / 2));
+                        if (board[nextX][nextY] == 0 && isJumpCorrect(midPawn))
+                            nextJumps.add(new Move(endX, endY, nextX, nextY, player));
+                    }
+                }
+            }
+        }
+        return nextJumps;
     }
 
     private boolean isJumpMove() {

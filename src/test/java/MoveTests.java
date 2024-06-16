@@ -18,7 +18,7 @@ public class MoveTests {
         public void makeSimpleMove() {
             Move move = new Move(0, 7, 0, 8, 1);
             Assertions.assertTrue(board.makeMove(move));
-            move = new Move(13, 10, 13, 9, 1);
+            move = new Move(13, 10, 13, 9, 2);
             Assertions.assertTrue(board.makeMove(move));
             move = new Move(3, 4, 3, 5, 1);
             Assertions.assertTrue(board.makeMove(move));
@@ -97,6 +97,7 @@ public class MoveTests {
             Move move = new Move(8, 15, 7, 15, 1);
             Assertions.assertFalse(board.makeMove(move));
             board.setCurrentPlayer(2);
+            move = new Move(8, 15, 7, 15, 2);
             Assertions.assertTrue(board.makeMove(move));
         }
 
