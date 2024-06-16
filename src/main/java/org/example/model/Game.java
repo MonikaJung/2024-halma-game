@@ -1,9 +1,13 @@
 package org.example.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.example.errors.InvalidBoardInitException;
 
 import java.util.Scanner;
 
+@Getter
+@Setter
 public class Game {
     private Board board;
     private final Scanner scanner;
