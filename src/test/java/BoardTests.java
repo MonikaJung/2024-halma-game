@@ -216,4 +216,56 @@ public class BoardTests {
         Assertions.assertEquals(4, board.getBoard()[3][0]);
         Assertions.assertEquals(4, board.getBoard()[4][1]);
     }
+
+    @Test
+    public  void  evaluateBoardFinal6P2() throws InvalidBoardInitException {
+        board = new Board(2, 6, 1, true);
+        Assertions.assertEquals(9, board.evaluateBoard(1));
+        Assertions.assertEquals(9, board.evaluateBoard(2));
+        Move move = new Move(3,4,3,3,1);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertEquals(10, board.evaluateBoard(1));
+        move = new Move(0,3,0,2,2);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertEquals(8, board.evaluateBoard(2));
+    }
+
+    @Test
+    public  void  evaluateBoard6P2() throws InvalidBoardInitException {
+        board = new Board(2, 6, 1);
+        Assertions.assertEquals(52, board.evaluateBoard(1));
+        Assertions.assertEquals(52, board.evaluateBoard(2));
+        Move move = new Move(0,1,0,3,1);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertEquals(50, board.evaluateBoard(1));
+        move = new Move(5,5,3,3,2);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertEquals(48, board.evaluateBoard(2));
+    }
+
+    @Test
+    public  void  evaluateBoard16P2() throws InvalidBoardInitException {
+        board = new Board(2, 16, 1);
+        Assertions.assertEquals(912, board.evaluateBoard(1));
+        Assertions.assertEquals(912, board.evaluateBoard(2));
+        Move move = new Move(0,6,0,8,1);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertEquals(910, board.evaluateBoard(1));
+        move = new Move(13,13,11,11,2);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertEquals(908, board.evaluateBoard(2));
+    }
+
+    @Test
+    public  void  evaluateBoardFinal16P2() throws InvalidBoardInitException {
+        board = new Board(2, 16, 1, true);
+        Assertions.assertEquals(170, board.evaluateBoard(1));
+        Assertions.assertEquals(169, board.evaluateBoard(2));
+        Move move = new Move(7,14,8,15,1);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertEquals(168, board.evaluateBoard(1));
+        move = new Move(3,5,3,4,2);
+        Assertions.assertTrue(board.makeMove(move));
+        Assertions.assertEquals(168, board.evaluateBoard(2));
+    }
 }

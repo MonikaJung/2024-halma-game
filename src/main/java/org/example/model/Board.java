@@ -22,6 +22,23 @@ public class Board {
         this.board = getInitialBoardState(playerCount, boardSize);
     }
 
+    public Board(int playerCount, int boardSize, int currentPlayer, boolean isTest) throws InvalidBoardInitException {
+        this.currentPlayer = currentPlayer;
+        this.playerCount = playerCount;
+        if (boardSize == 16) {
+            this.boardSize = 16;
+            this.board = BoardInitStates.finalBoardState16P2();
+        }
+        else if (playerCount == 4) {
+            this.board = BoardInitStates.finalBoardState6P4();
+            this.boardSize = 6;
+        }
+        else {
+            this.board = BoardInitStates.finalBoardState6P2();
+            this.boardSize = 6;
+        }
+    }
+
     public Board(Board board)  {
         this.currentPlayer = board.getCurrentPlayer();
         this.playerCount = board.getPlayerCount();
@@ -30,7 +47,7 @@ public class Board {
     }
 
     //todo - usun testowy konstruktor
-    public Board() throws InvalidBoardInitException {
+    public Board() {
         this.currentPlayer = 1;
         this.playerCount = 4;
         this.boardSize = 6;
@@ -68,11 +85,9 @@ public class Board {
                 if (board[x][y] == player) {
                     for (int dx = -2; dx <= 2; dx++) {
                         for (int dy = -2; dy <= 2; dy++) {
-                            if (Math.abs(dx) + Math.abs(dy) == 1 || Math.abs(dx) == 2 && Math.abs(dy) == 2) {
-                                Move potentialMove = new Move(x, y, x + dx, y + dy, player);
-                                if (potentialMove.doMoveIfIsLegal(board)) {
-                                    legalMoves.add(potentialMove);
-                                }
+                            Move potentialMove = new Move(x, y, x + dx, y + dy, player);
+                            if (potentialMove.isMoveLegal(board)) {
+                                legalMoves.add(potentialMove);
                             }
                         }
                     }
@@ -92,8 +107,9 @@ public class Board {
 
     public boolean makeMove(Move move) {
         if (move.doMoveIfIsLegal(board)) {
+
             board[move.getStartX()][move.getStartY()] = 0;
-            board[move.getEndX()][move.getEndY()] = currentPlayer;
+            board[move.getEndX()][move.getEndY()] = move.getPlayer();
 
             if (!move.canContinueJumping(board)) {
                 currentPlayer += 1;
@@ -129,5 +145,45 @@ public class Board {
             }
         }
         return true;
+    }
+
+    public void undoMove(Move move) {
+        Move undoMove = new Move(move.getEndX(), move.getEndY(), move.getStartX(), move.getStartY(), move.getPlayer());
+        if (undoMove.doMoveIfIsLegal(board)) {
+            board[undoMove.getStartX()][undoMove.getStartY()] = 0;
+            board[undoMove.getEndX()][undoMove.getEndY()] = move.getPlayer();
+
+            if (!undoMove.canContinueJumping(board)) {
+                currentPlayer -= 1;
+                if (currentPlayer <= 0) currentPlayer = playerCount;
+            }
+        }
+    }
+
+    public int evaluateBoard(int player) {
+        ///todo - usun printa
+        System.out.println("score counted for player" + player);
+        int score = 0;
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                if (this.board[i][j] == player) {
+                    score += calculatePositionCost(i, j, player);
+                }
+            }
+        }
+//todo uaun
+        System.out.println("score: " + score);
+        Printer.printBoard(board);
+        return score;
+    }
+
+    private int calculatePositionCost(int x, int y, int player) {
+        return switch (player) {
+            case 2 -> x + y;
+            case 1 -> (boardSize - 1 - x) + (boardSize - 1 - y);
+            case 4 -> x + (boardSize - 1 - y);
+            case 3 -> (boardSize - 1 - x) + y;
+            default -> 100000;
+        };
     }
 }
