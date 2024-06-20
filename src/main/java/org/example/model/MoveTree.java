@@ -41,19 +41,19 @@ public class MoveTree {
         } else System.out.println(bestMove);
     }
 
-    private MoveNode findBestLeaf(MoveNode parentNode, int currentDepth, boolean biggestScore) {
+    private MoveNode findBestLeaf(MoveNode parentNode, int currentDepth, boolean findMaxScore) {
         if (parentNode.getChildren().isEmpty()) {
             return parentNode;
         }
 
         MoveNode bestChild = null;
-        double bestScore = biggestScore ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        double bestScore = findMaxScore ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         for (MoveNode child : parentNode.getChildren()) {
-            MoveNode potentialBest = findBestLeaf(child, currentDepth + 1, !biggestScore);
-            if (biggestScore && potentialBest.getScore() - currentDepth > bestScore) {
+            MoveNode potentialBest = findBestLeaf(child, currentDepth + 1, !findMaxScore);
+            if (findMaxScore && potentialBest.getScore() - currentDepth > bestScore) {
                 bestScore = potentialBest.getScore() - currentDepth;
                 bestChild = potentialBest;
-            } else if (!biggestScore && potentialBest.getScore() + currentDepth < bestScore) {
+            } else if (!findMaxScore && potentialBest.getScore() + currentDepth < bestScore) {
                 bestScore = potentialBest.getScore() + currentDepth;
                 bestChild = potentialBest;
             }
@@ -79,27 +79,27 @@ public class MoveTree {
         MoveNode bestChild = null;
         double bestScore = biggestScore ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 
-            for (MoveNode child : parentNode.getChildren()) {
-                MoveNode potentialBest = findBestLeafAlfaBeta(child, currentDepth + 1, !biggestScore, alpha, beta);
-                if (biggestScore) {
-                    if (potentialBest.getScore() - currentDepth > bestScore) {
-                        bestScore = potentialBest.getScore() - currentDepth;
-                        bestChild = potentialBest;
-                        alpha = Math.max(alpha, bestScore);
-                        if (beta <= alpha) {
-                            break; // beta-cut
-                        }
-                    }
-                } else {
-                    if (potentialBest.getScore() + currentDepth < bestScore) {
-                        bestScore = potentialBest.getScore() + currentDepth;
-                        bestChild = potentialBest;
-                        beta = Math.min(beta, bestScore);
-                        if (beta <= alpha) {
-                            break; // alfa-cut
-                        }
+        for (MoveNode child : parentNode.getChildren()) {
+            MoveNode potentialBest = findBestLeafAlfaBeta(child, currentDepth + 1, !biggestScore, alpha, beta);
+            if (biggestScore) {
+                if (potentialBest.getScore() - currentDepth > bestScore) {
+                    bestScore = potentialBest.getScore() - currentDepth;
+                    bestChild = potentialBest;
+                    alpha = Math.max(alpha, bestScore);
+                    if (beta <= alpha) {
+                        break; // beta-cut
                     }
                 }
+            } else {
+                if (potentialBest.getScore() + currentDepth < bestScore) {
+                    bestScore = potentialBest.getScore() + currentDepth;
+                    bestChild = potentialBest;
+                    beta = Math.min(beta, bestScore);
+                    if (beta <= alpha) {
+                        break; // alfa-cut
+                    }
+                }
+            }
         }
         return bestChild;
     }
