@@ -22,10 +22,14 @@ public class Board {
         this.board = getInitialBoardState(playerCount, boardSize);
     }
 
-    public Board(int playerCount, int boardSize, int currentPlayer, boolean isTest) throws InvalidBoardInitException {
+    public Board(int playerCount, int boardSize, int currentPlayer, boolean isFinal) {
         this.currentPlayer = currentPlayer;
         this.playerCount = playerCount;
-        if (boardSize == 16) {
+        if(!isFinal){
+            this.board = BoardInitStates.preFinalBoardState6P2();
+            this.boardSize = 6;
+        }
+        else if (boardSize == 16) {
             this.boardSize = 16;
             this.board = BoardInitStates.finalBoardState16P2();
         }
@@ -37,13 +41,6 @@ public class Board {
             this.board = BoardInitStates.finalBoardState6P2();
             this.boardSize = 6;
         }
-    }
-
-    public Board(Board board)  {
-        this.currentPlayer = board.getCurrentPlayer();
-        this.playerCount = board.getPlayerCount();
-        this.boardSize = board.getBoardSize();
-        this.board = board.getBoard().clone();
     }
 
     //todo - usun testowy konstruktor
@@ -121,7 +118,7 @@ public class Board {
     }
 
     public boolean isGameOver() {
-        return isGameOver(getPrevPlayer());
+        return isGameOver(getPrevPlayer()) || isGameOver(currentPlayer);
     }
 
     public boolean isGameOver(int player) {
@@ -161,8 +158,6 @@ public class Board {
     }
 
     public int evaluateBoard(int player) {
-        ///todo - usun printa
-        System.out.println("score counted for player" + player);
         int score = 0;
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -171,9 +166,6 @@ public class Board {
                 }
             }
         }
-//todo uaun
-        System.out.println("score: " + score);
-        Printer.printBoard(board);
         return score;
     }
 

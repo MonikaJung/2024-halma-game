@@ -14,18 +14,45 @@ public class Main {
         //game.start(2, 16, 1);
         //testMoveTree();
         //testGetPlayerMoves();\
-        testAIPlayer();
+        //testAIPlayerFin();
+        testAIPlayerPreFin();
     }
-
-    public static void testAIPlayer() throws InvalidBoardInitException {
+    public static void testAIPlayerFin() {
+        System.out.println("\n---------FIN--------------");
         AIPlayer player1 = new AIPlayer(1, 3, false);
-        AIPlayer player2 = new AIPlayer(2, 1, false);
+        AIPlayer player2 = new AIPlayer(2, 5, false);
         Game game = new Game();
         game.setBoard(new Board(2, 6, 1, true));
-        MoveTree.MoveNode bestMoves1 = player1.selectMoves(game.getBoard());
-        System.out.println(bestMoves1);
-        System.out.println(bestMoves1.getParent());
-        System.out.println(bestMoves1.getParent().getParent());
+        System.out.println("-----Player 1");
+        List<Move> bestMoves1 = player1.selectMoves(game.getBoard());
+        Printer.printBoard(game.getBoard().getBoard());
+        System.out.println("moves: " + bestMoves1);
+        System.out.println();
+
+
+        System.out.println("-----Player 2");
+        List<Move> bestMoves2 = player2.selectMoves(game.getBoard());
+        Printer.printBoard(game.getBoard().getBoard());
+        System.out.println("moves: " + bestMoves2);
+    }
+
+    public static void testAIPlayerPreFin() {
+        System.out.println("\n---------PRE FIN--------------");
+        AIPlayer player1 = new AIPlayer(1, 4, false);
+        AIPlayer player2 = new AIPlayer(2, 5, false);
+        Game game = new Game();
+        game.setBoard(new Board(2, 6, 1, false));
+        System.out.println("-----Player 1");
+        List<Move> bestMoves1 = player1.selectMoves(game.getBoard());
+        Printer.printBoard(game.getBoard().getBoard());
+        System.out.println("moves: " + bestMoves1);
+        System.out.println();
+
+
+        System.out.println("-----Player 2");
+        List<Move> bestMoves2 = player2.selectMoves(game.getBoard());
+        Printer.printBoard(game.getBoard().getBoard());
+        System.out.println("moves: " + bestMoves2);
     }
     public static void testGetPlayerMoves() {
         Game game = new Game();

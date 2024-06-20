@@ -21,25 +21,40 @@ public class MoveTree {
     }
 
     public MoveNode getBestMove() {
-        MoveNode bestMove = findBestLeaf(root);
-//        while (bestMove.getParent() != null) {
-//            bestMove = bestMove.getParent();
-//        }
+        MoveNode bestMove = findBestLeaf(root, 1, false);
+        while (bestMove != null && bestMove.getParent() != root) {
+            bestMove = bestMove.getParent();
+        }
         return bestMove;
     }
 
-    private MoveNode findBestLeaf(MoveNode parentNode) {
+    public void printBestPath() {
+        MoveNode bestMove = findBestLeaf(root, 1, false);
+        System.out.println("Best path: ");
+        if (bestMove != null) {
+            StringBuilder path = new StringBuilder(bestMove.toString());
+            while (bestMove.getParent() != root) {
+                bestMove = bestMove.getParent();
+                path.insert(0, bestMove + " -> \n");
+            }
+            System.out.println(path);
+        } else System.out.println(bestMove);
+    }
+
+    private MoveNode findBestLeaf(MoveNode parentNode, int currentDepth, boolean biggestScore) {
         if (parentNode.getChildren().isEmpty()) {
             return parentNode;
         }
 
         MoveNode bestChild = null;
-        double bestScore = Double.POSITIVE_INFINITY;
+        double bestScore = biggestScore ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         for (MoveNode child : parentNode.getChildren()) {
-            MoveNode potentialBest = findBestLeaf(child);
-
-            if (potentialBest.getScore() < bestScore) {
-                bestScore = potentialBest.getScore();
+            MoveNode potentialBest = findBestLeaf(child, currentDepth + 1, !biggestScore);
+            if (biggestScore && potentialBest.getScore() - currentDepth > bestScore) {
+                bestScore = potentialBest.getScore() - currentDepth;
+                bestChild = potentialBest;
+            } else if (!biggestScore && potentialBest.getScore() + currentDepth < bestScore) {
+                bestScore = potentialBest.getScore() + currentDepth;
                 bestChild = potentialBest;
             }
         }
@@ -63,6 +78,8 @@ public class MoveTree {
         private final int score;
         private final int depth;
         @Setter
+        private boolean isWin;
+        @Setter
         private MoveNode parent;
         private final List<MoveNode> children;
 
@@ -72,6 +89,7 @@ public class MoveTree {
             this.depth = depth;
             this.parent = null;
             this.children = new ArrayList<>();
+            this.isWin = false;
         }
 
         public void addChild(MoveNode child) {
@@ -81,7 +99,8 @@ public class MoveTree {
 
         @Override
         public String toString() {
-            return "Node{" + "score=" + score + ", moves=" + moves + ", childrenCount=" + children.size() + '}';
+            return "Node{" + "score=" + score + ", moves=" + moves + ", childrenCount=" + children.size() + ", isWin" +
+                    "=" + isWin + "}";
         }
     }
 }

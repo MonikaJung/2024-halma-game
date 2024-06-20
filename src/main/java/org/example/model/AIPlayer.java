@@ -10,56 +10,46 @@ public class AIPlayer {
 
     public AIPlayer(int playerNumber, int depth, boolean useAlphaBeta) {
         this.playerNumber = playerNumber;
-        if (depth <= 5 && depth % 2 == 1) this.depth = depth;
+        if (depth <= 5 && depth > 0) this.depth = depth;
         else this.depth = 3;
         this.useAlphaBeta = useAlphaBeta;
     }
 
-    public MoveTree.MoveNode selectMoves(Board board) {
+    public List<Move> selectMoves(Board board) {
         MoveTree moveTree = new MoveTree(playerNumber);
+        if (board.isGameOver()) return null;
         populateMoveTree(moveTree.getRoot(), board, 1);
         if (this.useAlphaBeta) {
             //return selectMovesWithAlfaBeta(moveTree);
         }
-        return selectMovesNoAlfaBeta(moveTree);
+        return selectMovesNoAlfaBeta(moveTree).getMoves();
     }
 
 
     private MoveTree.MoveNode selectMovesNoAlfaBeta(MoveTree moveTree) {
         long startTime = System.currentTimeMillis();
-
         MoveTree.MoveNode bestMoveNode = moveTree.getBestMove();
-        //List<Move> bestMoves = bestMoveNode != null ? bestMoveNode.getMoves() : new ArrayList<>();
-
         long endTime = System.currentTimeMillis();
+
+        //printing best path
+        moveTree.printBestPath();
         System.out.println("No alfa-beta cuts time: " + (endTime - startTime) + " ms");
 
-        //return bestMoves;
         return bestMoveNode;
     }
 
-//    private List<Move> selectMovesWithAlfaBeta(MoveTree moveTree) {
-//        long startTime = System.currentTimeMillis();
-//
-//        MoveTree.MoveNode bestMoveNode = moveTree.getBestMove();
-//        List<Move> bestMoves = bestMoveNode != null ? bestMoveNode.getMoves() : new ArrayList<>();
-//
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("Alfa-beta cuts time: " + (endTime - startTime) + " ms");
-//
-//        return bestMoves;
-//    }
-
     private void populateMoveTree(MoveTree.MoveNode parentNode, Board board, int currentDepth) {
-        if (board.isGameOver() || currentDepth > depth)
+        if (currentDepth > depth) return;
+        if (board.isGameOver()){
+            parentNode.setWin(true);
             return;
+        }
 
         List<Move> possibleMoves;
         int player = playerNumber;
         if (currentDepth % 2 == 1) {
             possibleMoves = board.getMovesForPlayer(player);
-        }
-        else {
+        } else {
             player = playerNumber + 1 > 2 ? 1 : playerNumber + 1;
             possibleMoves = board.getMovesForPlayer(player);
         }
@@ -73,11 +63,17 @@ public class AIPlayer {
             MoveTree.MoveNode childNode = new MoveTree.MoveNode(moveList, score, currentDepth);
             parentNode.addChild(childNode);
 
+            if (board.isGameOver()) {
+                childNode.setWin(true);
+                board.undoMove(move);
+                return;
+            }
             if (move.canContinueJumping(board.getBoard())) {
                 populateMoveTreeWithJumps(childNode, board, currentDepth, player);
             } else {
                 populateMoveTree(childNode, board, currentDepth + 1);
             }
+
             board.undoMove(move);
         }
     }
@@ -94,12 +90,19 @@ public class AIPlayer {
             MoveTree.MoveNode childNode = new MoveTree.MoveNode(moveList, score, currentDepth);
             currentNode.getParent().addChild(childNode);
 
+            if (board.isGameOver()) {
+                childNode.setWin(true);
+                board.undoMove(move);
+                return;
+            }
+
             if (move.canContinueJumping(board.getBoard())) {
                 populateMoveTreeWithJumps(childNode, board, currentDepth, player);
             } else {
                 populateMoveTree(childNode, board, currentDepth + 1);
             }
             board.undoMove(move);
+
         }
     }
 }
