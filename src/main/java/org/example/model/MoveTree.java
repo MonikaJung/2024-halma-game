@@ -61,6 +61,50 @@ public class MoveTree {
         return bestChild;
     }
 
+    public MoveNode getBestMoveAlfaBeta() {
+        double alpha = Double.NEGATIVE_INFINITY;
+        double beta = Double.POSITIVE_INFINITY;
+        MoveNode bestMove = findBestLeafAlfaBeta(root, 1, false, alpha, beta);
+        while (bestMove != null && bestMove.getParent() != root) {
+            bestMove = bestMove.getParent();
+        }
+        return bestMove;
+    }
+
+    private MoveNode findBestLeafAlfaBeta(MoveNode parentNode, int currentDepth, boolean biggestScore, double alpha, double beta) {
+        if (parentNode.getChildren().isEmpty()) {
+            return parentNode;
+        }
+
+        MoveNode bestChild = null;
+        double bestScore = biggestScore ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+
+            for (MoveNode child : parentNode.getChildren()) {
+                MoveNode potentialBest = findBestLeafAlfaBeta(child, currentDepth + 1, !biggestScore, alpha, beta);
+                if (biggestScore) {
+                    if (potentialBest.getScore() - currentDepth > bestScore) {
+                        bestScore = potentialBest.getScore() - currentDepth;
+                        bestChild = potentialBest;
+                        alpha = Math.max(alpha, bestScore);
+                        if (beta <= alpha) {
+                            break; // beta-cut
+                        }
+                    }
+                } else {
+                    if (potentialBest.getScore() + currentDepth < bestScore) {
+                        bestScore = potentialBest.getScore() + currentDepth;
+                        bestChild = potentialBest;
+                        beta = Math.min(beta, bestScore);
+                        if (beta <= alpha) {
+                            break; // alfa-cut
+                        }
+                    }
+                }
+        }
+        return bestChild;
+    }
+
+
     public void printTree() {
         printNodeWithChildren(root, "");
     }

@@ -15,7 +15,8 @@ public class Main {
         //testMoveTree();
         //testGetPlayerMoves();\
         //testAIPlayerFin();
-        testAIPlayerPreFin();
+        //testAIPlayerPreFin();
+        testAlphaBeta();
     }
     public static void testAIPlayerFin() {
         System.out.println("\n---------FIN--------------");
@@ -54,6 +55,33 @@ public class Main {
         Printer.printBoard(game.getBoard().getBoard());
         System.out.println("moves: " + bestMoves2);
     }
+
+    public static void testAlphaBeta() {
+        System.out.println("\n---------No alpha-beta--------------");
+        AIPlayer player1 = new AIPlayer(1, 4, false);
+        AIPlayer player2 = new AIPlayer(2, 5, false);
+        Game game = new Game();
+        game.setBoard(new Board(2, 6, 1, false));
+        System.out.println("-----Player 1");
+        List<Move> bestMoves1 = player1.selectMoves(game.getBoard());
+        System.out.println("moves: " + bestMoves1);
+        System.out.println();
+        System.out.println("-----Player 2");
+        List<Move> bestMoves2 = player2.selectMoves(game.getBoard());
+        System.out.println("moves: " + bestMoves2);
+        System.out.println("\n---------Alpha-beta--------------");
+        player1 = new AIPlayer(1, 4, true);
+        player2 = new AIPlayer(2, 5, true);
+        game.setBoard(new Board(2, 6, 1, false));
+        System.out.println("-----Player 1");
+        bestMoves1 = player1.selectMoves(game.getBoard());
+        System.out.println("moves: " + bestMoves1);
+        System.out.println();
+        System.out.println("-----Player 2");
+        bestMoves2 = player2.selectMoves(game.getBoard());
+        System.out.println("moves: " + bestMoves2);
+    }
+
     public static void testGetPlayerMoves() {
         Game game = new Game();
         game.setBoard(new Board());

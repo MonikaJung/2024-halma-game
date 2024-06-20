@@ -20,7 +20,7 @@ public class AIPlayer {
         if (board.isGameOver()) return null;
         populateMoveTree(moveTree.getRoot(), board, 1);
         if (this.useAlphaBeta) {
-            //return selectMovesWithAlfaBeta(moveTree);
+            return selectMovesWithAlfaBeta(moveTree).getMoves();
         }
         return selectMovesNoAlfaBeta(moveTree).getMoves();
     }
@@ -34,6 +34,19 @@ public class AIPlayer {
         //printing best path
         moveTree.printBestPath();
         System.out.println("No alfa-beta cuts time: " + (endTime - startTime) + " ms");
+
+        return bestMoveNode;
+    }
+
+
+    private MoveTree.MoveNode selectMovesWithAlfaBeta(MoveTree moveTree) {
+        long startTime = System.currentTimeMillis();
+        MoveTree.MoveNode bestMoveNode = moveTree.getBestMoveAlfaBeta();
+        long endTime = System.currentTimeMillis();
+
+        //printing best path
+        moveTree.printBestPath();
+        System.out.println("Alfa-beta cuts time: " + (endTime - startTime) + " ms");
 
         return bestMoveNode;
     }
